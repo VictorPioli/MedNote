@@ -302,6 +302,7 @@ Se encontrar problemas:
 **Logs úteis para debug:**
 - Backend: `npm run dev` (mostra logs detalhados)
 - Frontend: Console do navegador (F12)
+```
 │   │   │   ├── layout/     # Header e navegação
 │   │   │   ├── recording/  # Gravação e visualização
 │   │   │   ├── diagnosis/  # Resultados e transcrições
@@ -323,6 +324,7 @@ Se encontrar problemas:
 │   └── dist/          # Build compilado
 │
 └── README.md          # Este arquivo
+```
 ```
 
 ## 🛠 Tecnologias
