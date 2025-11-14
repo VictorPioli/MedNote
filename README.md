@@ -302,30 +302,7 @@ Se encontrar problemas:
 **Logs úteis para debug:**
 - Backend: `npm run dev` (mostra logs detalhados)
 - Frontend: Console do navegador (F12)
-```
-│   │   │   ├── layout/     # Header e navegação
-│   │   │   ├── recording/  # Gravação e visualização
-│   │   │   ├── diagnosis/  # Resultados e transcrições
-│   │   │   ├── history/    # Histórico de consultas
-│   │   │   ├── chat/       # Interface conversacional
-│   │   │   └── ui/         # Componentes utilitários
-│   │   ├── services/       # APIs e serviços
-│   │   ├── types/          # TypeScript types
-│   │   └── config/         # Configurações
-│   └── build/         # Build para produção
-│
-├── backend/           # Node.js + Express + TypeScript
-│   ├── src/
-│   │   ├── controllers/    # Controladores da API
-│   │   ├── services/       # Lógica de negócio
-│   │   ├── types/          # Tipos TypeScript
-│   │   └── config.ts       # Configurações
-│   ├── keys/          # Chaves Firebase (não versionado)
-│   └── dist/          # Build compilado
-│
-└── README.md          # Este arquivo
-```
-```
+
 
 ## 🛠 Tecnologias
 
