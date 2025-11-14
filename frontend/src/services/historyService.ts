@@ -1,24 +1,18 @@
-import axios from 'axios';
-import { ConsultationRecord, DiagnosisResult } from '../types';
-import { API_CONFIG, ERROR_MESSAGES } from '../constants';
-
-const api = axios.create({
-  baseURL: API_CONFIG.BASE_URL,
-  timeout: API_CONFIG.TIMEOUT,
-});
+import { ConsultationRecord } from '../types';
+import { ApiService } from './api';
 
 export class BackendHistoryService {
   /**
-   * Recupera o histórico de consultas via backend
+   * Recupera o histórico de consultas via backend usando ApiService
    */
   async getConsultationHistory(): Promise<ConsultationRecord[]> {
     try {
       console.log('🔄 Carregando histórico via backend...');
       
-      const response = await api.get(API_CONFIG.ENDPOINTS.CONSULTATIONS);
+      const response = await ApiService.getConsultations();
       
-      if (response.data.success) {
-        const consultations = response.data.consultations;
+      if (response.success) {
+        const consultations = response.consultations;
         console.log(`📊 Histórico carregado: ${consultations.length} registros`);
         
         // Mapear dados do backend para o formato esperado pelo frontend
@@ -34,16 +28,12 @@ export class BackendHistoryService {
           }
         }));
       } else {
-        console.error('❌ Backend retornou erro:', response.data.message);
+        console.error('❌ Backend retornou erro:', response.message);
         return [];
       }
     } catch (error) {
       console.error('❌ Erro ao carregar histórico via backend:', error);
-      if (axios.isAxiosError(error)) {
-        const message = error.response?.data?.message || 'Erro ao carregar histórico';
-        throw new Error(message);
-      }
-      throw new Error('Erro de conexão ao carregar histórico');
+      throw error;
     }
   }
 
@@ -52,46 +42,27 @@ export class BackendHistoryService {
    */
   async getConsultation(consultationId: string): Promise<ConsultationRecord | null> {
     try {
-      const response = await api.get(`/api/consultations/${consultationId}`);
-      
-      if (response.data.success) {
-        const consultation = response.data.consultation;
-        return {
-          id: consultation.id,
-          timestamp: new Date(consultation.timestamp),
-          transcript: consultation.transcription || consultation.transcript || '',
-          result: {
-            diagnosis: consultation.diagnosis || '',
-            diseases: Array.isArray(consultation.diseases) ? consultation.diseases : [],
-            exams: Array.isArray(consultation.exams) ? consultation.exams : [],
-            medications: Array.isArray(consultation.medications) ? consultation.medications : []
-          }
-        };
-      }
-      return null;
+      // Por enquanto, vamos usar getConsultationHistory e filtrar
+      // TODO: Adicionar endpoint específico no backend se necessário
+      const consultations = await this.getConsultationHistory();
+      const consultation = consultations.find(c => c.id === consultationId);
+      return consultation || null;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 404) {
-        return null;
-      }
       console.error('❌ Erro ao carregar consulta:', error);
-      throw new Error('Erro ao carregar consulta');
+      return null;
     }
   }
 
   /**
-   * Deleta uma consulta via backend
+   * Deleta uma consulta via backend usando ApiService
    */
   async deleteConsultation(consultationId: string): Promise<void> {
     try {
-      await api.delete(`/api/consultations/${consultationId}`);
+      await ApiService.deleteConsultation(consultationId);
       console.log('✅ Consulta deletada via backend');
     } catch (error) {
       console.error('❌ Erro ao deletar consulta:', error);
-      if (axios.isAxiosError(error)) {
-        const message = error.response?.data?.message || 'Erro ao deletar consulta';
-        throw new Error(message);
-      }
-      throw new Error('Erro de conexão ao deletar consulta');
+      throw error;
     }
   }
 
@@ -143,7 +114,8 @@ export class BackendHistoryService {
   async testBackendConnection(): Promise<boolean> {
     try {
       console.log('🧪 Testando conexão com backend...');
-      await api.get('/api/health');
+      // Usar o método de consultas para testar a conexão
+      await ApiService.getConsultations(1);
       console.log('✅ Conexão com backend OK');
       return true;
     } catch (error) {

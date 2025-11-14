@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { DiagnoseResponse, TranscribeResponse, ChatResponse, DiagnosisResult } from '../types';
+import { DiagnoseResponse, TranscribeResponse, ChatResponse } from '../types';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
@@ -81,6 +81,38 @@ export class ApiService {
         throw new Error(message);
       }
       throw new Error('Erro de conexão no chat');
+    }
+  }
+
+  /**
+   * Busca o histórico de consultas do backend
+   */
+  static async getConsultations(limit: number = 50): Promise<any> {
+    try {
+      const response = await api.get(`/api/consultations?limit=${limit}`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message || 'Erro ao buscar consultas';
+        throw new Error(message);
+      }
+      throw new Error('Erro de conexão ao buscar histórico');
+    }
+  }
+
+  /**
+   * Deleta uma consulta do histórico
+   */
+  static async deleteConsultation(consultationId: string): Promise<any> {
+    try {
+      const response = await api.delete(`/api/consultations/${consultationId}`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message || 'Erro ao deletar consulta';
+        throw new Error(message);
+      }
+      throw new Error('Erro de conexão ao deletar consulta');
     }
   }
 }
